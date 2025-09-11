@@ -11,6 +11,7 @@
  - [submit the job script to the cluster](#submit-the-job-script-to-the-cluster)
  - [create `snpEff` database for reference genome](#create-snpeff-database-for-reference-genome)
  - [annotate variants with `snpEff`](#annotate-variants-with-snpeff)
+ - [call structural variants with `sniffles`](#call-structural-variants-with-sniffles)
  - [download results to your local computer](#download-results-to-your-local-computer)
 
 ## connect to cluster
@@ -182,7 +183,7 @@ wget -O "a3e9ca7c3a_20250513_Deventer1L.zip" "https://microbesng-data.s3-eu-west
 unzip a3e9ca7c3a_20250513_Deventer1L.zip
 ```
 
-For today, lets copy some example data into our working directory. This is a fastq file containing nanopore reads for one of the samples (303546L_NewmanF128YNOVRpGO1) and a reference genome (298352L_Newman).
+For today, lets copy some example data into our working directory. This is a fastq file containing nanopore reads for one of the samples (303544L_NewmanNOVR) and a reference genome (298352L_Newman).
 
 ```
 # copy the reads for 303544L_NewmanNOVR to our data directory
@@ -601,7 +602,7 @@ total 559M
 Have a look a the summary table:
 
 ```
-cat results/303546L_NewmanF128YNOVRpGO1/snp.tab
+cat results/303544L_NewmanNOVR/snp.tab
 ```
 
 This should return:
@@ -628,9 +629,9 @@ contig_1	762108		TTAATTTTTTGTATAAGTGGATTAATAAAAATA	CCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 contig_1	762349		AGTTGTGATGGTATATGTTGTAAAG	CCCCCCCCCCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCCCCCCCCCC:0 AGTTGTGATGGTATATGTTGTAAAG:0	CDS	-	648/687	208/228	missense_variant c.624_648delCTTTACAACATATACCATCACAACTinsGGGGGGGGGGGGGGGGGGGGGGGGG p.SerPheThrThrTyrThrIleThrThr208ArgGlyGlyGlyGlyGlyGlyGlyGly	EBLKDO_00744	saeR	response regulator transcription factor SaeR
 ```
 
-## call structural variants with `Sniffles2`
+## call structural variants with `Sniffles`
 
-Create an empty file called `run_sniffles2.sh`:
+Create an empty file called `sniffles.sh`:
 
 ```
 touch sniffles.sh
@@ -682,11 +683,11 @@ contig_2        1       Sniffles2.DUP.6S1       N       <DUP>   59      PASS    
 
 ## download results to your local computer
 
-On a terminal on your computer (not the cluster), use `scp` to securely copy the results file from the cluster to your local computer. Replace `USERNAME` with your actual cluster username:
+On a terminal on your computer (not the cluster), use `scp` to securely copy the results file from the cluster to your local computer. Replace both occurences of `USERNAME` with your own cluster username:
 
 ```
 # "." is shorthand for the current directory on your local computer
-scp -r USERNAME@gruffalo.cropdiversity.ac.uk:/mnt/shared/scratch/pjohnsto/medaka_test/results/303544L_NewmanNOVR .
+scp -r USERNAME@gruffalo.cropdiversity.ac.uk:/mnt/shared/scratch/USERNAME/medaka_test/results/303544L_NewmanNOVR .
 ```
 
 We will also need the reference genome and annotation files:
@@ -707,5 +708,5 @@ Type the coordinate of the first variant `contig_1:4948` from your variant calli
 
 You should see something like this:
 
-![IGV screenshot](images/igv_snapshot.png)
+![IGV screenshot](img/igv_snapshot.png)
 
