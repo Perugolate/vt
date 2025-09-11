@@ -4,11 +4,14 @@
  - [install `conda`](#install-conda)
  - [create a conda environment for `medaka` version 2.1.1](#create-a-conda-environment-for-medaka-version-211)
  - [create a conda environment for `snippy` version 4.6.0](#create-a-conda-environment-for-snippy-version-460)
- - [using the conda environment](#using-the-conda-environment)
+ - [create a conda environment for `sniffles` version 2.6.3](#create-a-conda-environment-for-sniffles-version-263)
  - [create working directory](#create-working-directory)
-   - [](#)
-   - [](#)
-   - [](#)
+ - [copy example data](#copy-example-data)
+ - [create a job script](#create-a-job-script)
+ - [submit the job script to the cluster](#submit-the-job-script-to-the-cluster)
+ - [create `snpEff` database for reference genome](#create-snpeff-database-for-reference-genome)
+ - [annotate variants with `snpEff`](#annotate-variants-with-snpeff)
+ - [download results to your local computer](#download-results-to-your-local-computer)
 
 ## connect to cluster
 
@@ -62,6 +65,12 @@ conda create -n snippy_v4.6.0 snippy=4.6.0
 ```
 
 Type `y` and press <kbd>Enter</kbd> to proceed.
+
+## create a conda environment for `sniffles` version 2.6.3
+
+```
+conda create -n sniffles_v2.6.3 sniffles=2.6.3
+```
 
 ## create working directory
 
@@ -390,6 +399,54 @@ total 571393
 -rw-r--r-- 1 pjohnsto pjohnsto     14128 Sep 11 17:12 medaka.vcf
 ```
 
+The quality/depth filtered variants are in `medaka.annotated.filt.vcf`.
+
+Look at the filtered variants:
+
+```
+cat results/303544L_NewmanNOVR/medaka.annotated.filt.vcf
+```
+This should return:
+
+```console
+##fileformat=VCFv4.1
+##FILTER=<ID=PASS,Description="All filters passed">
+##medaka_version=2.1.1
+##contig=<ID=contig_1>
+##contig=<ID=contig_3>
+##contig=<ID=contig_4>
+##contig=<ID=contig_2,length=2448>
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Medaka genotype.">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Medaka genotype quality score">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Depth of reads at position, calculated from read pileup, capped to ~8000.">
+##INFO=<ID=DPS,Number=2,Type=Integer,Description="Depth of reads at position by strand (fwd, rev), calculated from read pileup, capped to ~8000 total.">
+##INFO=<ID=DPSP,Number=1,Type=Integer,Description="Depth of reads spanning pos +-25. This is not capped as in the case of DP and DPS.">
+##INFO=<ID=SR,Number=.,Type=Integer,Description="Depth of spanning reads by strand which best align to each allele (ref fwd, ref rev, alt1 fwd, alt1 rev, etc.). This is not capped as in the case of DP and DPS.">
+##INFO=<ID=AR,Number=2,Type=Integer,Description="Depth of ambiguous spanning reads by strand which align equally well to all alleles (fwd, rev). This is not capped as in the case of DP and DPS.">
+##INFO=<ID=SC,Number=.,Type=Integer,Description="Total alignment score to each allele of spanning reads by strand (ref fwd, ref rev, alt1 fwd, alt1 rev, etc.) aligned with parasail: match 5, mismatch -4, open 5, extend 3">
+##bcftools_viewVersion=1.22+htslib-1.22.1
+##bcftools_viewCommand=view -i 'QUAL>30 & DP>10' results/303544L_NewmanNOVR/medaka.annotated.vcf; Date=Thu Sep 11 17:26:29 2025
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE
+contig_1	4948	.	G	T	49.325	PASS	AR=1,0;DP=173;DPS=92,81;DPSP=170;SC=21909,19081,22719,19792;SR=0,0,90,79	GT:GQ	1:49
+contig_1	761225	.	CTTTGCATTTTATTTTATAAATAAATCGGATTATGACGTAATGTCTAATTTGTGTAATGTTACAGTCA	C	278.046	PASS	AR=83,88;DP=181;DPS=86,95;DPSP=176;SC=10347,11684,10342,11659;SR=1,4,0,0	GT:GQ	1:278
+contig_1	761336	.	GTTATTTTGTTG	CCCCCCCCCCCC	30.543	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:31
+contig_1	761391	.	GTTTTTGTATTA	CCCCCCCCCCCC	38.646	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:39
+contig_1	761453	.	TGGTATAATG	CCCCCCCCCC	31.74	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:32
+contig_1	761518	.	TAATATTAATAT	CCCCCCCCCCCC	32.663	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:33
+contig_1	761546	.	ATTTGAAAATTTTAG	CCCCCCCCCCCCCCC	40.409	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:40
+contig_1	761570	.	AAGTAAGTTTGTTAAAATA	CCCCCCCCCCCCCCCCCCC	47.875	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:48
+contig_1	761605	.	GATATTGATAAAATG	CCCCCCCCCCCCCCC	36.1	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:36
+contig_1	761714	.	TAGTTGTATTAATT	CCCCCCCCCCCCCC	31.917	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:32
+contig_1	761729	.	TGGGGGATATGTTTTA	CCCCCCCCCCCCCCCC	38.326	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:38
+contig_1	761747	.	TGTATTTAAAGTGATAATATGAGT	CCCCCCCCCCCCCCCCCCCCCCCC	50.503	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:51
+contig_1	761780	.	AAATAATGTTGATAAT	CCCCCCCCCCCCCCCC	30.043	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:30
+contig_1	761804	.	TTGTTTAATTAATATGT	CCCCCCCCCCCCCCCCC	35.04	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:35
+contig_1	761897	.	TAAAGGTGTTTTTAAAT	CCCCCCCCCCCCCCCCC	30.492	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:30
+contig_1	761997	.	ATTTTATTAAAAGATTGATTTAATT	CCCCCCCCCCCCCCCCCCCCCCCCC	36.142	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:36
+contig_1	762108	.	TTAATTTTTTGTATAAGTGGATTAATAAAAATA	CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC	37.538	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:38
+contig_1	762349	.	AGTTGTGATGGTATATGTTGTAAAG	CCCCCCCCCCCCCCCCCCCCCCCCC	33.615	PASS	AR=0,0;DP=176;DPS=84,92;DPSP=0;SC=0,0,0,0;SR=0,0,0,0	GT:GQ	1:34
+```
+
 ## create `snpEff` database for reference genome
 
 Create an empty file called `build_snpEffdb.sh`:
@@ -547,6 +604,82 @@ Have a look a the summary table:
 cat results/303546L_NewmanF128YNOVRpGO1/snp.tab
 ```
 
+This should return:
+
+```console
+CHROM	POS	TYPE	REF	ALT	EVIDENCE	FTYPE	STRAND	NT_POS	AA_POS	EFFECT	LOCUS_TAG	GENE	PRODUCT
+contig_1	4948		G	T	T:0 G:0	CDS	+	431/1935	144/644	missense_variant c.431G>T p.Arg144Ile	EBLKDO_00005	gyrB	DNA topoisomerase (ATP-hydrolyzing) subunit B
+contig_1	761225		CTTTGCATTTTATTTTATAAATAAATCGGATTATGACGTAATGTCTAATTTGTGTAATGTTACAGTCA	C	C:0 CTTTGCATTTTATTTTATAAATAAATCGGATTATGACGTAATGTCTAATTTGTGTAATGTTACAGTCA:0	region	+		340/351	frameshift_variant&stop_lost&splice_region_variant c.1019_*29delTGACTGTAACATTACACAAATTAGACATTACGTCATAATCCGATTTATTTATAAAATAAAATGCAAA p.Met340fs			
+contig_1	761336		GTTATTTTGTTG	CCCCCCCCCCCC	CCCCCCCCCCCC:0 GTTATTTTGTTG:0	CDS	-	975/1056	322/351	missense_variant c.964_975delCAACAAAATAACinsGGGGGGGGGGGG p.GlnGlnAsnAsn322GlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761391		GTTTTTGTATTA	CCCCCCCCCCCC	CCCCCCCCCCCC:0 GTTTTTGTATTA:0	CDS	-	920/1056	303/351	missense_variant c.909_920delTAATACAAAAACinsGGGGGGGGGGGG p.AsnThrLysThr304GlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761453		TGGTATAATG	CCCCCCCCCC	CCCCCCCCCC:0 TGGTATAATG:0	CDS	-	858/1056	283/351	missense_variant c.849_858delCATTATACCAinsGGGGGGGGGG p.IleIlePro284GlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761518		TAATATTAATAT	CCCCCCCCCCCC	CCCCCCCCCCCC:0 TAATATTAATAT:0	CDS	-	793/1056	261/351	missense_variant c.782_793delATATTAATATTAinsGGGGGGGGGGGG p.AspIleAsnIleSer261GlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761546		ATTTGAAAATTTTAG	CCCCCCCCCCCCCCC	CCCCCCCCCCCCCCC:0 ATTTGAAAATTTTAG:0	CDS	-	765/1056	251/351	missense_variant c.751_765delCTAAAATTTTCAAATinsGGGGGGGGGGGGGGG p.LeuLysPheSerAsn251GlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761570		AAGTAAGTTTGTTAAAATA	CCCCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCCCC:0 AAGTAAGTTTGTTAAAATA:0	CDS	-	741/1056	241/351	missense_variant c.723_741delTATTTTAACAAACTTACTTinsGGGGGGGGGGGGGGGGGGG p.IleLeuThrAsnLeuLeu242GlyGlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761605		GATATTGATAAAATG	CCCCCCCCCCCCCCC	CCCCCCCCCCCCCCC:0 GATATTGATAAAATG:0	CDS	-	706/1056	231/351	missense_variant c.692_706delCATTTTATCAATATCinsGGGGGGGGGGGGGGG p.AlaPheTyrGlnTyrArg231GlyGlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761714		TAGTTGTATTAATT	CCCCCCCCCCCCCC	CCCCCCCCCCCCCC:0 TAGTTGTATTAATT:0	CDS	-	597/1056	195/351	missense_variant c.584_597delAATTAATACAACTAinsGGGGGGGGGGGGGG p.GluLeuIleGlnLeu195GlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761729		TGGGGGATATGTTTTA	CCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCC:0 TGGGGGATATGTTTTA:0	CDS	-	582/1056	189/351	missense_variant c.567_582delTAAAACATATCCCCCAinsGGGGGGGGGGGGGGGG p.LysThrTyrProPro190GlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761747		TGTATTTAAAGTGATAATATGAGT	CCCCCCCCCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCCCCCCCCC:0 TGTATTTAAAGTGATAATATGAGT:0	CDS	-	564/1056	181/351	missense_variant c.541_564delACTCATATTATCACTTTAAATACAinsGGGGGGGGGGGGGGGGGGGGGGGG p.ThrHisIleIleThrLeuAsnThr181GlyGlyGlyGlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761780		AAATAATGTTGATAAT	CCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCC:0 AAATAATGTTGATAAT:0	CDS	-	531/1056	172/351	missense_variant c.516_531delATTATCAACATTATTTinsGGGGGGGGGGGGGGGG p.LeuSerThrLeuPhe173GlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761804		TTGTTTAATTAATATGT	CCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCC:0 TTGTTTAATTAATATGT:0	CDS	-	507/1056	164/351	missense_variant c.491_507delACATATTAATTAAACAAinsGGGGGGGGGGGGGGGGG p.AspIleLeuIleLysGln164GlyGlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761897		TAAAGGTGTTTTTAAAT	CCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCC:0 TAAAGGTGTTTTTAAAT:0	CDS	-	414/1056	133/351	missense_variant c.398_414delATTTAAAAACACCTTTAinsGGGGGGGGGGGGGGGGG p.AspLeuLysThrProLeu133GlyGlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	761997		ATTTTATTAAAAGATTGATTTAATT	CCCCCCCCCCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCCCCCCCCCC:0 ATTTTATTAAAAGATTGATTTAATT:0	CDS	-	314/1056	97/351	missense_variant c.290_314delAATTAAATCAATCTTTTAATAAAATinsGGGGGGGGGGGGGGGGGGGGGGGGG p.GluLeuAsnGlnSerPheAsnLysMet97GlyGlyGlyGlyGlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	762108		TTAATTTTTTGTATAAGTGGATTAATAAAAATA	CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:0 TTAATTTTTTGTATAAGTGGATTAATAAAAATA:0	CDS	-	203/1056	57/351	missense_variant c.171_203delTATTTTTATTAATCCACTTATACAAAAAATTAAinsGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG p.SerIlePheIleAsnProLeuIleGlnLysIleLys57ArgGlyGlyGlyGlyGlyGlyGlyGlyGlyGlyGly	EBLKDO_00743	saeS	two-component system sensor histidine kinase SaeS
+contig_1	762349		AGTTGTGATGGTATATGTTGTAAAG	CCCCCCCCCCCCCCCCCCCCCCCCC	CCCCCCCCCCCCCCCCCCCCCCCCC:0 AGTTGTGATGGTATATGTTGTAAAG:0	CDS	-	648/687	208/228	missense_variant c.624_648delCTTTACAACATATACCATCACAACTinsGGGGGGGGGGGGGGGGGGGGGGGGG p.SerPheThrThrTyrThrIleThrThr208ArgGlyGlyGlyGlyGlyGlyGlyGly	EBLKDO_00744	saeR	response regulator transcription factor SaeR
+```
+
+## call structural variants with `Sniffles2`
+
+Create an empty file called `run_sniffles2.sh`:
+
+```
+touch sniffles.sh
+```
+
+Open the file in the `nano` text editor:
+
+```
+nano sniffles.sh
+```
+
+Copy and paste the following lines into the editor, and replace `USERNAME` on line 2 with your username:
+
+```bash
+#!/bin/bash
+#SBATCH --chdir=/mnt/shared/scratch/USERNAME/medaka_test/
+#SBATCH --job-name=sniffles
+#SBATCH --partition=short
+#SBATCH --ntasks=1
+#SBATCH --mem=8G
+#SBATCH --cpus-per-task=1
+
+source /home/${USER}/.bashrc
+
+conda activate sniffles_v2.6.3
+
+sniffles -i results/303544L_NewmanNOVR/calls_to_ref.bam -v results/303544L_NewmanNOVR/sniffles.vcf
+```
+
+Save the changes by pressing <kbd>Ctrl</kbd> + <kbd>X</kbd>, then type `y` and press <kbd>Enter</kbd> to exit.
+
+Submit the script for execution:
+
+```
+sbatch sniffles.sh
+```
+
+Display the contents of the output file to see the results:
+
+```
+cat results/303544L_NewmanNOVR/sniffles.vcf
+```
+
+```console
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  SAMPLE
+contig_1        761226  Sniffles2.DEL.B9S0      N       <DEL>   60      PASS    PRECISE;SVTYPE=DEL;SVLEN=-1303;END=762528;SUPPORT=179;COVERAGE=181,176,176,176,189;STRAND=+-;STDEV_LEN=0.000;STDEV_POS=0.000;SUPPORT_SA=3;VAF=1.000    GT:GQ:DR:DV     1/1:60:0:179
+contig_2        1       Sniffles2.DUP.6S1       N       <DUP>   59      PASS    PRECISE;SVTYPE=DUP;SVLEN=2448;END=2448;SUPPORT=17463;COVERAGE=0,0,15142,8812,0;STRAND=+-;STDEV_LEN=0.000;STDEV_POS=0.000;VAF=0.797     GT:GQ:DR:DV     1/1:44:4446:17463    
+```
+
 ## download results to your local computer
 
 On a terminal on your computer (not the cluster), use `scp` to securely copy the results file from the cluster to your local computer. Replace `USERNAME` with your actual cluster username:
@@ -554,5 +687,25 @@ On a terminal on your computer (not the cluster), use `scp` to securely copy the
 ```
 # "." is shorthand for the current directory on your local computer
 scp -r USERNAME@gruffalo.cropdiversity.ac.uk:/mnt/shared/scratch/pjohnsto/medaka_test/results/303544L_NewmanNOVR .
+```
 
+We will also need the reference genome and annotation files:
+
+```
+scp -r USERNAME@gruffalo.cropdiversity.ac.uk:/mnt/shared/projects/uosa/jo_hobbs/298352L_Newman .
+```
+
+Download the appropriate version of `IGV` for your operating system [here](https://igv.org/doc/desktop/#DownloadPage/)
+
+In `IGV`, load the reference genome by going to `Genomes` > `Load Genome from File...` and selecting `298352L_Newman/298352L_Newman.fna`.
+
+The load the genome annotation by going to `File` > `Load from File...` and selecting `298352L_Newman/298352L_Newman.gff3`.
+
+Finally, load the alignment file by going to `File` > `Load from File...` and selecting `303544L_NewmanNOVR/calls_to_ref.bam`.
+
+Type the coordinate of the first variant `contig_1:4948` from your variant calling results into the empty white box next to "Go" and press <kbd>Enter</kbd>.
+
+You should see something like this:
+
+![IGV screenshot](images/igv_snapshot.png)
 
