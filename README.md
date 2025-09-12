@@ -39,6 +39,11 @@ install-bioconda
 
 Your shell needs to be reloaded to recognize the `conda` command. You can do this by closing and reopening your terminal session. Either type `exit` and press <kbd>Enter</kbd> or use the shortcut <kbd>Ctrl</kbd> + <kbd>D</kbd>.
 
+Now run:
+
+```
+conda init
+```
 ## create a conda environment for `medaka` version 2.1.1
 
 I strongly recommend that you create a separate conda environment for each software package you want to use. This allows you to manage different versions of software and their dependencies without conflicts.
@@ -222,7 +227,7 @@ source /home/${USER}/.bashrc
 
 # activate the conda environment containing medaka
 conda activate medaka_v2.1.1
-
+source /mnt/apps/users/USERNAME/conda/bin/activate medaka_v2.1.1
 # run medaka to call variants
 medaka_variant \
   -i data/303544L_NewmanNOVR.fastq.gz \
@@ -478,6 +483,7 @@ source /home/${USER}/.bashrc
 
 # activate the conda environment containing snippy
 conda activate snippy_v4.6.0
+source /mnt/apps/users/USERNAME/conda/bin/activate snippy_v4.6.0
 
 # Create the snpEff directory structure
 mkdir -p snpEff/data/298352L_Newman
@@ -554,6 +560,7 @@ source /home/${USER}/.bashrc
 
 # activate the conda environment containing snippy
 conda activate snippy_v4.6.0
+source /mnt/apps/users/USERNAME/conda/bin/activate snippy_v4.6.0
 
 # run snpEff
 cd snpEff && snpEff ann -v \
@@ -657,6 +664,7 @@ Copy and paste the following lines into the editor, and replace `USERNAME` on li
 source /home/${USER}/.bashrc
 
 conda activate sniffles_v2.6.3
+source /mnt/apps/users/USERNAME/conda/bin/activate sniffles_v2.6.3
 
 sniffles -i results/303544L_NewmanNOVR/calls_to_ref.bam -v results/303544L_NewmanNOVR/sniffles.vcf
 ```
