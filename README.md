@@ -18,11 +18,11 @@
 
 The cluster only accepts password logins from a limited whitelist of St Andrews IP addresses, which does not include wireless eduroam. You will need to follow the [instructions](https://help.cropdiversity.ac.uk/ssh-terminal-keys.html) to generate an `ssh` key pair that will allow you to connect from outside of the IP whitelist range. You will be randomly prompted for 2FA authenication. You will therefore need to follow the instructions in the welcome email to setup 2FA.
 
-You can login to the cluster using `ssh` from a terminal. Your cluster username is given in the welcome email and will differ from you St Andrews SSO username.
+You can login to the cluster using `ssh` from a terminal. Your cluster username is given in the welcome email and will differ from your St Andrews SSO username.
 
 ```
-# replace "CROP_DIVERSITY_USERNAME" with your actual cluster username
-ssh CROP_DIVERSITY_USERNAME@gruffalo.cropdiversity.ac.uk
+# replace "USERNAME" with your actual cluster username
+ssh USERNAME@gruffalo.cropdiversity.ac.uk
 ```
 
 ## install `conda`
@@ -59,7 +59,8 @@ You will be prompted to confirm the installation of the package and its dependen
 Later on we will use the conda environments in scripts by including a line such as:
 
 ```
-conda activate medaka_v2.1.1
+# remember to replace "USERNAME" with your actual cluster username
+source /mnt/apps/users/USERNAME/conda/bin/activate medaka_v2.1.1
 ```
 
 ## create a conda environment for `snippy` version 4.6.0
@@ -104,7 +105,7 @@ This should return your home directory (/home/USERNAME):
 /home/pjohnsto
 ```
 
-Your home directory is where you end up each time you log in to the cluster but your work should be done under your scratch directory to prevent large files from slowing down the nightly backuups of home. Scratch is located under `/mnt/shared/scratch/USERNAME`.
+Your home directory is where you end up each time you log in to the cluster but your work should be done under your scratch directory to prevent large files from slowing down the nightly backups of home. Scratch is located under `/mnt/shared/scratch/USERNAME`.
 
 Go to your scratch directory:
 
@@ -175,14 +176,14 @@ drwxr-xr-x 2 pjohnsto pjohnsto 52 Sep 10 23:30 rnaseq_01
 drwxr-xr-x 2 pjohnsto pjohnsto 19 Apr  1 23:55 rnaseq_02
 ```
 
-In the future when you have more microbesng data available, you can download like so:
+In the future when you have more microbesng data available, you can download like so (replacing `wget -O "a3e9ca7c3a_20250513_Deventer1L.zip"` with whatever you want to name the downloaded zip archive, and the URL with the actual URL from your microbesng project page):
 
 (this is just an example, do not run these commands as the data is already present)
 
 ```
 # go to the projects directory
 cd /mnt/shared/projects/uosa/jo_hobbs/
-# right click on "Download Reads" on microbesng and copy the link address
+# in your browser go to your microbsng project page, right click on "Download Reads" and copy the link address, paste the url in place of the one below
 wget -O "a3e9ca7c3a_20250513_Deventer1L.zip" "https://microbesng-data.s3-eu-west-1.amazonaws.com/projects/a3e9ca7c3a_20250513_Deventer1L/reads.zip"
 # unzip the data
 unzip a3e9ca7c3a_20250513_Deventer1L.zip
@@ -226,8 +227,8 @@ This will open the `nano` text editor. Copy and paste the following lines into t
 source /home/${USER}/.bashrc
 
 # activate the conda environment containing medaka
-conda activate medaka_v2.1.1
 source /mnt/apps/users/USERNAME/conda/bin/activate medaka_v2.1.1
+
 # run medaka to call variants
 medaka_variant \
   -i data/303544L_NewmanNOVR.fastq.gz \
@@ -243,7 +244,7 @@ bcftools view -i 'QUAL>30 & DP>10' \
 
 ```
 
-Use your arrow keys to navigate to line 2 and replace `USERNAME` with your actual cluster username. Save the changes by pressing <kbd>Ctrl</kbd> + <kbd>X</kbd>, then type `y` and press <kbd>Enter</kbd> to exit.
+Use your arrow keys to navigate to lines 2 and 13, and replace `USERNAME` with your actual cluster username. Save the changes by pressing <kbd>Ctrl</kbd> + <kbd>X</kbd>, then type `y` and press <kbd>Enter</kbd> to exit.
 
 As a final check, print the contents of the script to the terminal:
 
@@ -254,6 +255,7 @@ cat medaka_test.sh
 This should return:
 
 ```console
+
 #!/bin/bash
 #SBATCH --chdir=/mnt/shared/scratch/pjohnsto/medaka_test/
 #SBATCH --job-name=med_test
@@ -266,7 +268,7 @@ This should return:
 source /home/${USER}/.bashrc
 
 # activate the conda environment containing medaka
-conda activate medaka_v2.1.1
+source /mnt/apps/users/pjohnsto/conda/bin/activate medaka_v2.1.1
 
 # run medaka to call variants
 medaka_variant \
@@ -280,6 +282,7 @@ medaka_variant \
 bcftools view -i 'QUAL>30 & DP>10' \
   results/303544L_NewmanNOVR/medaka.annotated.vcf \
   > results/303544L_NewmanNOVR/medaka.annotated.filt.vcf
+
 ```
 
 ## submit the job script to the cluster
@@ -467,7 +470,7 @@ Open the file in the `nano` text editor:
 nano build_snpEffdb.sh
 ```
 
-Copy and paste the following lines into the editor, and replace `USERNAME` on line 2 with your username:
+Copy and paste the following lines into the editor, and replace `USERNAME` on lines 2 and 13 with your username:
 
 ```bash
 #!/bin/bash
@@ -482,7 +485,6 @@ Copy and paste the following lines into the editor, and replace `USERNAME` on li
 source /home/${USER}/.bashrc
 
 # activate the conda environment containing snippy
-conda activate snippy_v4.6.0
 source /mnt/apps/users/USERNAME/conda/bin/activate snippy_v4.6.0
 
 # Create the snpEff directory structure
@@ -544,7 +546,7 @@ Open the file in the `nano` text editor:
 nano run_snpEff.sh
 ```
 
-Copy and paste the following lines into the editor, and replace `USERNAME` on line 2 with your username:
+Copy and paste the following lines into the editor, and replace `USERNAME` on lines 2 and 13 with your username:
 
 ```bash
 #!/bin/bash
@@ -559,7 +561,6 @@ Copy and paste the following lines into the editor, and replace `USERNAME` on li
 source /home/${USER}/.bashrc
 
 # activate the conda environment containing snippy
-conda activate snippy_v4.6.0
 source /mnt/apps/users/USERNAME/conda/bin/activate snippy_v4.6.0
 
 # run snpEff
